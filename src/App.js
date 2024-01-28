@@ -1,25 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { Collapse } from "bootstrap-4-react/lib/components";
+import { BDiv } from "bootstrap-4-react/lib/components/dom";
+import { BH5 } from "bootstrap-4-react/lib/components/dom/h";
+import { BSpan } from "bootstrap-4-react/lib/components/dom";
+import { Navbar } from "bootstrap-4-react";
+import { Nav } from "bootstrap-4-react";
+import Home from "./components/Home";
+import Register from "./components/Register";
+import Login from "./components/Login";
+import UserDetails from "./components/UserDetails";
+import HeaderLoggedUser from "./components/HeaderLoggedUser";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import HeaderUnloggedUser from "./components/HeaderUnloggedUser";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  let [loggedIn, setLoggedIn] = useState(0);
+  sessionStorage.setItem("isLoggedIn", false);
+
+  useEffect(() => {
+    try {
+      axios.get("/api/employee/user").then(function (res) {
+        console.log("dataaaa");
+        console.log(res.data);
+        if (res.data.length == 0) {
+          console.log("NEULOGOVAN");
+          console.log(loggedIn);
+        } else {
+          console.log("ULOGOVAN");
+          setLoggedIn(true);
+          console.log(loggedIn);
+        }
+      });
+    } catch (err) {
+      console.log(err.toJSON());
+    }
+  }, []);
+
+  if (loggedIn == false) {
+    return (
+      <div>
+        <HeaderUnloggedUser />
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <HeaderLoggedUser />
+      </div>
+    );
+  }
 }
 
 export default App;
